@@ -4,6 +4,10 @@ let formUsers;
 let refUsers;
 let tbodyTableUsers;
 let elementDeleteUser;
+var CREATE = 'Anadir Convalidacion'
+var UPDATE = 'Modificar Convalidacion '
+var modo = CREATE;
+let  refUsersUpdate;
 //Funcion en donde vamos a Ejecutar el registro de usuario
 function inicializar() {
     //Seleccionamos el formulario Usuario.
@@ -23,6 +27,7 @@ function inicializar() {
 
 
 const showDataUsers = () => {
+
     //Quiero que cada que este en value , me hague algo
 
     refUsers.on('value', function (snap) {
@@ -82,6 +87,7 @@ const showDataUsers = () => {
 }
 
 function deleteUsers() {
+    debugger
 
     //Quiero coger aquel elemento que yo hiz click quiero borrar
     let dataUserDelete = this.getAttribute("data-users");
@@ -93,16 +99,17 @@ function deleteUsers() {
 function updateUsers() {
     //Quiero coger aquel elemento que yo hiz click quiero borrar
     let dataUserUpdate = this.getAttribute("data-users");
-    let refUsersUpdate = refUsers.child(dataUserUpdate);
-    refUsersUpdate.once('value',function (snap) {
+    refUsersUpdate = refUsers.child(dataUserUpdate);
+    refUsersUpdate.once('value', function (snap) {
         var datos = snap.val();
-        document.getElementById('users-name').value=datos.usersEmail;
-        document.getElementById('users-last-name').value=datos.usersLastName;
-        document.getElementById('users-email').value=datos.usersName;
-        document.getElementById('users-password').value=datos.usersPassword;
-        
-    })
-    document.getElementById('button-update')
+        document.getElementById('users-email').value = datos.usersEmail;
+        document.getElementById('users-last-name').value = datos.usersLastName;
+        document.getElementById('users-mame').value = datos.usersName;
+        document.getElementById('users-password').value = datos.usersPassword;
+
+    });
+    document.getElementById('Enviar-Update').value = UPDATE;
+    modo=UPDATE;
 
 }
 
@@ -110,15 +117,35 @@ function updateUsers() {
 
 const submitUsersFirebase = (event) => {
     event.preventDefault();
-    refUsers.push({
-        usersEmail: event.target.usersEmail.value,
-        usersLastName: event.target.usersLastName.value,
-        usersName: event.target.usersName.value,
-        usersPassword: event.target.usersPassword.value,
-    });
+    switch (modo) {
+        case CREATE:
+        refUsers.push({
+            usersEmail: event.target.usersEmail.value,
+            usersLastName: event.target.usersLastName.value,
+            usersName: event.target.usersName.value,
+            usersPassword: event.target.usersPassword.value,
+        });
+
+            break;
+        case UPDATE:
+        refUsersUpdate.update ({
+            usersEmail: event.target.usersEmail.value,
+            usersLastName: event.target.usersLastName.value,
+            usersName: event.target.usersName.value,
+            usersPassword: event.target.usersPassword.value,
+
+        });
+
+            break;
+
+        default:
+            break;
+    }
+
     //Para borrar una vez que guarda los archivos
     formUsers.reset();
 }
+
 
 
 
